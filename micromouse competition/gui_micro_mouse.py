@@ -111,14 +111,14 @@ def new_time() :
     time()
     team_time()
     
-    
+started = 0
 def time():
-    global s , m ,reset
+    global s , m ,reset , started
     if mg<=2 and reset == 1:
         s=0
         m=0
         reset=0
-    if mg<2 : 
+    if mg<2 and started == 1: 
         
         string = 'Lap time {}:{}'.format(m,s)
         lbl.config(text = string) 
@@ -127,6 +127,9 @@ def time():
             s=0
             m+=1
         s+=1
+    if  mg<2 and started !=1:
+        lbl.after(1000, time) 
+
 
 
 def team_time():
@@ -192,36 +195,51 @@ team_name.place(relx=0.1,rely=0.65)
 
         
 #------------------------buttons/sensors-----------------------------------------------
-
+record=False
 tops=[]
 counter=0
 def stop():
-    global t,tops,counter,reset
+    global t,tops,counter,reset, started ,sensor_1_counter,record
     reset=1
-   
+    started=0
+    sensor_1_counter=0
     
     counter+=1
-    
-        
-
-    tops.append([m,s,'@LAP({})'.format(counter)])
-    if len(tops)!=1:
-        
-        tops=sort(tops)
-        print(tops)
-    #lbl.config(text = '0:0') 
-    label_best.config(text='Best time {}:{}'.format(tops[0][0],tops[0][1]))
-    """
-    res=''
-    for t in tops:
-        res+='{}:{} {}\n'.format(t[0],t[1],t[2])
-    top10.config(text = res)
+    if record :
     
 
-    """
+        tops.append([m,s,'@LAP({})'.format(counter)])
+        if len(tops)!=1:
+            
+            tops=sort(tops)
+            print(tops)
+        #lbl.config(text = '0:0') 
+        label_best.config(text='Best time {}:{}'.format(tops[0][0],tops[0][1]))
+        """
+        res=''
+        for t in tops:
+            res+='{}:{} {}\n'.format(t[0],t[1],t[2])
+        top10.config(text = res)
+        
+
+        """
+        record =False
+
+sensor_1_counter=1
+def start():
+    global t,tops,counter,reset , started ,sensor_1_counter,record
+    sensor_1_counter+=1
+    if sensor_1_counter==2:
+        started=1
+        record=True
+
+
     
     
-MyButton3 = Button(frameleft, text="sensor pulse", width=10, command=stop,fg='blue')
+MyButton3 = Button(frameleft, text="start sensor pulse", width=15, command=start,fg='blue')
+MyButton3.place(relx=.1, rely=.85)
+
+MyButton3 = Button(frameleft, text="end sensor pulse", width=15, command=stop,fg='blue')
 MyButton3.place(relx=.4, rely=.85)
 
 
